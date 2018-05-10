@@ -18,4 +18,5 @@ public interface PostDao {
 
 	boolean deletePost(int id);
 
+
 }

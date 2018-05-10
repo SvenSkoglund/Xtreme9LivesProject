@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.skilldistillery.xtreme.data.PostDao;
+import com.skilldistillery.xtreme.data.PostService;
 import com.skilldistillery.xtreme.entities.Post;
 
 @RestController
@@ -20,6 +21,9 @@ public class PostController {
 
 	@Autowired
 	private PostDao postDAO;
+
+	@Autowired
+	private PostService service;
 
 	@RequestMapping(path = "ping", method = RequestMethod.GET)
 	public String ping() {
@@ -45,7 +49,7 @@ public class PostController {
 		if (post != null) {
 			response.setStatus(202);
 			return p;
-		}else {
+		} else {
 			response.setStatus(500);
 			return null;
 		}
@@ -56,7 +60,7 @@ public class PostController {
 	public Post replacePost(@RequestBody String json, @PathVariable int id) {
 		return postDAO.replacePost(json, id);
 	}
-	
+
 	// Patch api/posts/{id}
 	@RequestMapping(path = "posts/{id}", method = RequestMethod.PATCH)
 	public Post updatePost(@RequestBody String json, @PathVariable int id) {
@@ -69,5 +73,16 @@ public class PostController {
 		return postDAO.deletePost(id);
 	}
 
-	
+	// Patch api/posts/{id}
+	@RequestMapping(path = "posts/search/{keyword}", method = RequestMethod.GET)
+	public List<Post> searchPostByKeyword(@PathVariable String keyword) {
+		return service.searchPostByKeyword(keyword);
+	}
+
+	// api/posts/search/price/{low}/{high}
+	@RequestMapping(path = "posts/search/price/{low}/{high}", method = RequestMethod.GET)
+	public List<Post> searchWithinPriceRange(@PathVariable double low, @PathVariable double high) {
+		return service.findByPriceBetween(low, high);
+	}
+
 }
